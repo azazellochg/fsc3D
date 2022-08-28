@@ -33,7 +33,7 @@ import matplotlib.pyplot as plt
 import mrcfile
 import click
 
-from utility_functions import blockPrint,enablePrint,print_progress
+from utility_functions import blockPrint, enablePrint
 import cuda_functions
 
 
@@ -92,8 +92,8 @@ def AddAxes(f, jDir, Val):
 
 @jit
 def ZeroPad(nx, ny, nz, fT, gT):
-    fp = np.zeros([nx + 2, ny, nz])
-    gp = np.zeros([nx + 2, ny, nz])
+    fp = np.zeros((nx + 2, ny, nz))
+    gp = np.zeros((nx + 2, ny, nz))
 
     for ix in range(nx):
         for iy in range(ny):
@@ -108,7 +108,7 @@ def ZeroPad(nx, ny, nz, fT, gT):
 
 @jit
 def FFTArray2Real(nx, ny, nz, F):
-    d1 = np.zeros([nx + 4, ny, nz])  # 36,32,32
+    d1 = np.zeros((nx + 4, ny, nz))  # 36,32,32
 
     for ix in range(0, nx + 3, 2):
         ixover2 = ix // 2
@@ -195,13 +195,13 @@ def CreateFSCOutputs(inc, nx, ny, nz, d1, d2, nx2, ny2, nz2, dx2, dy2, dz2):
 def createFSCarrays(nx, ny, nz, lsd2, lr, inc, dx2, dy2, dz2, d1, d2, nx2, ny2, nz2):
     lrMaxOver2 = int(lr[-1] // 2)
 
-    kXofR = np.zeros([inc + 1, lrMaxOver2], dtype=int)
-    kYofR = np.zeros([inc + 1, lrMaxOver2], dtype=int)
-    kZofR = np.zeros([inc + 1, lrMaxOver2], dtype=int)
-    retofRR = np.zeros([inc + 1, lrMaxOver2])
-    retofRI = np.zeros([inc + 1, lrMaxOver2])
-    n1ofR = np.zeros([inc + 1, lrMaxOver2])
-    n2ofR = np.zeros([inc + 1, lrMaxOver2])
+    kXofR = np.zeros((inc + 1, lrMaxOver2), dtype=int)
+    kYofR = np.zeros((inc + 1, lrMaxOver2), dtype=int)
+    kZofR = np.zeros((inc + 1, lrMaxOver2), dtype=int)
+    retofRR = np.zeros((inc + 1, lrMaxOver2))
+    retofRI = np.zeros((inc + 1, lrMaxOver2))
+    n1ofR = np.zeros((inc + 1, lrMaxOver2))
+    n2ofR = np.zeros((inc + 1, lrMaxOver2))
 
     NumAtEachR = np.zeros(inc + 1, dtype=int)
     #
@@ -270,12 +270,12 @@ def createFSCarrays(nx, ny, nz, lsd2, lr, inc, dx2, dy2, dz2, d1, d2, nx2, ny2, 
 def createFTarrays(nx, ny, nz, lsd2, lr, inc, dx2, dy2, dz2, dcH, dFPower, nx2, ny2, nz2):
     lrMaxOver2 = int(lr[-1] // 2)
 
-    kXofR = np.zeros([inc + 1, lrMaxOver2], dtype=int)
-    kYofR = np.zeros([inc + 1, lrMaxOver2], dtype=int)
-    kZofR = np.zeros([inc + 1, lrMaxOver2], dtype=int)
-    retcH = np.zeros([inc + 1, lrMaxOver2])
-    retFT = np.zeros([inc + 1, lrMaxOver2])
-    n12ofR = np.zeros([inc + 1, lrMaxOver2])
+    kXofR = np.zeros((inc + 1, lrMaxOver2), dtype=int)
+    kYofR = np.zeros((inc + 1, lrMaxOver2), dtype=int)
+    kZofR = np.zeros((inc + 1, lrMaxOver2), dtype=int)
+    retcH = np.zeros((inc + 1, lrMaxOver2))
+    retFT = np.zeros((inc + 1, lrMaxOver2))
+    n12ofR = np.zeros((inc + 1, lrMaxOver2))
 
     NumAtEachR = np.zeros(inc + 1, dtype=int)
     #
@@ -411,11 +411,11 @@ def AveragesOnShellsInnerLogicC(retNowR, retNowI, n1Now, n2Now, Start, End, NumA
 def AveragesOnShellsUsingLogicB(inc, retofRR, retofRI, n1ofR, n2ofR, kXofR, kYofR, kZofR, NumAtEachR, Thresh, RMax):
     print('This loop will go to ' + str(RMax) + '\n')
     NumAtEachRMax = NumAtEachR[-1]
-    retofROutR = np.zeros([inc + 1, NumAtEachRMax])  # retofRR.copy();# Real part of output
-    retofROutI = np.zeros([inc + 1, NumAtEachRMax])  # retofRI.copy();# Imag part of output
-    n1ofROut = np.zeros([inc + 1, NumAtEachRMax])  # n1ofR.copy();
-    n2ofROut = np.zeros([inc + 1, NumAtEachRMax])  # n2ofR.copy();
-    NumAtROut = np.zeros([inc + 1, NumAtEachRMax])  #
+    retofROutR = np.zeros((inc + 1, NumAtEachRMax))  # retofRR.copy();# Real part of output
+    retofROutI = np.zeros((inc + 1, NumAtEachRMax))  # retofRI.copy();# Imag part of output
+    n1ofROut = np.zeros((inc + 1, NumAtEachRMax))  # n1ofR.copy();
+    n2ofROut = np.zeros((inc + 1, NumAtEachRMax))  # n2ofR.copy();
+    NumAtROut = np.zeros((inc + 1, NumAtEachRMax))  #
     NumAtEachRMaxCuda = 15871
 
     retofROutR[0, 0] = retofRR[0, 0]
@@ -526,10 +526,10 @@ def NormalizeShells(nx, ny, nz, kXofR, kYofR, kZofR, inc, retofROutR, retofROutI
     if nz % 2:
         nzOut += 1  # if nz was odd, nzOut=nz
 
-    ResEMR = np.zeros([nxOut, nyOut, nzOut])
-    ResEMI = np.zeros([nxOut, nyOut, nzOut])
-    ResNum = np.zeros([nxOut, nyOut, nzOut])
-    ResDen = np.zeros([nxOut, nyOut, nzOut])
+    ResEMR = np.zeros((nxOut, nyOut, nzOut))
+    ResEMI = np.zeros((nxOut, nyOut, nzOut))
+    ResNum = np.zeros((nxOut, nyOut, nzOut))
+    ResDen = np.zeros((nxOut, nyOut, nzOut))
 
     ResEMR[nx2 - 1, ny2 - 1, nz2 - 1] = 1.0
     ResNum[nx2 - 1, ny2 - 1, nz2 - 1] = retofROutR[0][0]
@@ -774,7 +774,7 @@ def main(fNHalfMap1, fNHalfMap2, OutputStringLabel, APixels, dthetaInDegrees, gp
     G = np.fft.fftn(gp)  # G= temp.transpose();
 
     H = F * np.conj(G)
-    H.shape
+    # H.shape
     HAngle = np.angle(H)
     CosHangle = np.cos(HAngle)
 
@@ -1229,4 +1229,4 @@ def main(fNHalfMap1, fNHalfMap2, OutputStringLabel, APixels, dthetaInDegrees, gp
 
 
 if __name__ == "__main__":
-    main(argv[1], argv[2], argv[3], float(argv[4]), float(argv[5]), argv[6])
+    main(argv[1], argv[2], argv[3], float(argv[4]), float(argv[5]), bool(argv[6]))

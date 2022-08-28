@@ -37,5 +37,5 @@ def blockPrint():
 
 def enablePrint():
     #       sys.stdout = open('threedfscstdout.log', 'a')
-    # sys.stdout = sys.__stdout__
-    pass
+    sys.stdout = sys.__stdout__
+    #pass

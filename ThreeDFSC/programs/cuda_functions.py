@@ -11,11 +11,11 @@ def AveragesOnShellsUsingLogicBCuda(inc, retofRR, retofRI, n1ofR, n2ofR, kXofR, 
                                     NumAtEachR, Thresh, RMax):
     print('This loop will go to ' + str(RMax) + '\n')
     NumAtEachRMax = NumAtEachR[-1]
-    retofROutR = np.zeros([inc + 1, NumAtEachRMax])  # retofRR.copy();# Real part of output
-    retofROutI = np.zeros([inc + 1, NumAtEachRMax])  # retofRI.copy();# Imag part of output
-    n1ofROut = np.zeros([inc + 1, NumAtEachRMax])  # n1ofR.copy();
-    n2ofROut = np.zeros([inc + 1, NumAtEachRMax])  # n2ofR.copy();
-    NumAtROut = np.zeros([inc + 1, NumAtEachRMax])  #
+    retofROutR = np.zeros((inc + 1, NumAtEachRMax))  # retofRR.copy();# Real part of output
+    retofROutI = np.zeros((inc + 1, NumAtEachRMax))  # retofRI.copy();# Imag part of output
+    n1ofROut = np.zeros((inc + 1, NumAtEachRMax))  # n1ofR.copy();
+    n2ofROut = np.zeros((inc + 1, NumAtEachRMax))  # n2ofR.copy();
+    NumAtROut = np.zeros((inc + 1, NumAtEachRMax))  #
 
     print("shape of retofROutR is ", np.shape(retofROutR))
     NumAtEachRMaxCuda = 15871

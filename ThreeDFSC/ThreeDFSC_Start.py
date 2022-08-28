@@ -171,7 +171,6 @@ def execute(options):
     print("--- %s seconds ---" % (time.time() - start_program_time))
     print(
         "Please email prbprb2@gmail.com, ytan@nysbc.org and dlyumkis@salk.edu if there are any problems/suggestions. Thank you.\n")
-    return
 
 
 if __name__ == '__main__':
@@ -245,7 +244,7 @@ if __name__ == '__main__':
             try:
                 numba.cuda.select_device(gpu_id)
             except:
-                raise BaseException(
+                raise Exception(
                     "\n\nGPU ID %s does not exist. Make sure CUDA and Numba are installed correctly, and then check available GPU's with `nvidia-smi`.\n\n" % gpu_id)
         else:
             print("Auto-detecting GPU ID")

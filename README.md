@@ -6,12 +6,14 @@ GPU code and Conda environment by Carl Negro.
 
 3DFSC Program Suite requires Miniconda 3 to run, and UCSF Chimera to visualize the outputs.
 
-Important: this version of the software is modified for use with Scipion (April 2020).
+Important: this version of the software has been modified to work with updated dependencies (August 2022).
 
 ## Installation ##
 
-1) conda env create -f environment.yml
-2) conda activate 3DFSC
+1) conda create -y -n fsc3D-3.0 python=3 cudatoolkit numba
+2) conda activate fsc3D-3.0
+3) pip install scipy numpy click h5py scikit-image matplotlib mrcfile
+4) git clone -b scipion https://github.com/azazellochg/fsc3D fsc3D-3.0
 
 ## Execution ##
 
