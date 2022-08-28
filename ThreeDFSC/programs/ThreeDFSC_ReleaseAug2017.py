@@ -33,7 +33,7 @@ import matplotlib.pyplot as plt
 import mrcfile
 import click
 
-from utility_functions import blockPrint,enablePrint,print_progress
+from utility_functions import blockPrint, enablePrint
 import cuda_functions
 
 
@@ -774,7 +774,7 @@ def main(fNHalfMap1, fNHalfMap2, OutputStringLabel, APixels, dthetaInDegrees, gp
     G = np.fft.fftn(gp)  # G= temp.transpose();
 
     H = F * np.conj(G)
-    H.shape
+    # H.shape
     HAngle = np.angle(H)
     CosHangle = np.cos(HAngle)
 
@@ -1229,4 +1229,4 @@ def main(fNHalfMap1, fNHalfMap2, OutputStringLabel, APixels, dthetaInDegrees, gp
 
 
 if __name__ == "__main__":
-    main(argv[1], argv[2], argv[3], float(argv[4]), float(argv[5]), argv[6])
+    main(argv[1], argv[2], argv[3], float(argv[4]), float(argv[5]), bool(argv[6]))
