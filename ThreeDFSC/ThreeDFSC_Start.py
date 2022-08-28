@@ -171,7 +171,6 @@ def execute(options):
     print("--- %s seconds ---" % (time.time() - start_program_time))
     print(
         "Please email prbprb2@gmail.com, ytan@nysbc.org and dlyumkis@salk.edu if there are any problems/suggestions. Thank you.\n")
-    return
 
 
 if __name__ == '__main__':
