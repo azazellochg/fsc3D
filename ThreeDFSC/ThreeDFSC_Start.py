@@ -47,13 +47,11 @@ import mrcfile
 import time
 import click
 
-# add the programs submodule directory to the path so we can import its files from anywhere
+# add the programs submodule directory to the path, so we can import its files from anywhere
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'programs'))
 import ThreeDFSC_ReleaseAug2017
-import ThreeDFSC_Analysis  # Version 6.0 Latest
+import ThreeDFSC_Analysis
 
-# saveout = sys.stdout
-# sys.stdout = open('threedfscstdout.log', 'w')
 
 start_program_time = time.time()
 
@@ -249,5 +247,3 @@ if __name__ == '__main__':
         else:
             print("Auto-detecting GPU ID")
     execute(options)
-    if options.gpu:
-        numba.cuda.close()

@@ -10,10 +10,10 @@ Important: this version of the software has been modified to work with updated d
 
 ## Installation ##
 
-1) conda create -y -n fsc3D-3.0 python=3 cudatoolkit numba
+1) conda create -y -n fsc3D-3.0 "python<3.12" cudatoolkit
 2) conda activate fsc3D-3.0
-3) pip install scipy numpy click h5py scikit-image matplotlib mrcfile
-4) git clone -b scipion https://github.com/azazellochg/fsc3D fsc3D-3.0
+3) pip install numpy numba scipy click h5py scikit-image matplotlib mrcfile
+4) git clone https://github.com/azazellochg/fsc3D fsc3D-3.0
 
 ## Execution ##
 
