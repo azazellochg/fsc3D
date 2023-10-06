@@ -23,7 +23,7 @@ def calcNeighborsKernel(points_array,
                         memory_inmrc_thresholdedbinarized,
                         outarraythresholded,
                         outarraythresholdedbinarized):
-    # NOTE: using i as the thread index, NOT x, so as to mimic original CPU code more easily
+    # NOTE: using i as the thread index, NOT x, to mimic original CPU code more easily
     i = cuda.grid(1)
 
     if i >= points_array.shape[0]:
@@ -259,10 +259,6 @@ def sum_rowsKernel(NumAtROutPre_global_mem,
 @cuda.jit
 def filter_and_sum(retofRR_global_mem, retofRI_global_mem, n1ofR_global_mem, n2ofR_global_mem, NumAtROutPre, reduced,
                    End, Start, NumOnSurf, r):
-    # retNowR = retofRR_global_mem[r][:NumOnSurf]
-    # retNowI = retofRI_global_mem[r][:NumOnSurf]
-    # n1Now = n1ofR_global_mem[r][:NumOnSurf]
-    # n2Now = n2ofR_global_mem[r][:NumOnSurf]
 
     x = cuda.grid(1)
     if x >= (End - Start):
@@ -292,13 +288,8 @@ def cuda_calcProd11(kXofR_global_mem, kYofR_global_mem, kZofR_global_mem, Prod11
     """Calculate partial product Prod11
     """
     x = cuda.grid(1)
-    # if x >= kXofR_global_mem[r][:NumOnSurf].shape[0]:
     if x >= kXofR_global_mem[:NumOnSurf].shape[0]:
         return
-
-    # Prod11[x] = kXofR_global_mem[r][x]*kXofR_global_mem[r][x] +\
-    #            kYofR_global_mem[r][x]*kYofR_global_mem[r][x] +\
-    #            kZofR_global_mem[r][x]*kZofR_global_mem[r][x]
 
     Prod11[x] = kXofR_global_mem[x] * kXofR_global_mem[x] + \
                 kYofR_global_mem[x] * kYofR_global_mem[x] + \
@@ -309,10 +300,6 @@ def cuda_calcProd11(kXofR_global_mem, kYofR_global_mem, kZofR_global_mem, Prod11
 def cuda_calcInner2(kXofR_global_mem, kYofR_global_mem, kZofR_global_mem, Prod11, C, End, Start, Thresh, NumOnSurf, r):
     """Calculate Prod12
     """
-    # kXNow = kXofR_global_mem[r][:NumOnSurf]
-    # kYNow = kYofR_global_mem[r][:NumOnSurf]
-    # kZNow = kZofR_global_mem[r][:NumOnSurf]
-
     x = cuda.grid(1)
     if x >= Prod11.shape[0]:
         return
@@ -326,14 +313,10 @@ def cuda_calcInner2(kXofR_global_mem, kYofR_global_mem, kZofR_global_mem, Prod11
 
         else:
 
-            # Prod12 = kX1*kX2 + kY1*kY2 + kZ1*kZ2
-            # Prod12 = kXNow[x]*kXNow[(i+Start)] + kYNow[x]*kYNow[(i+Start)] + kZNow[x]*kZNow[(i+Start)]
             Prod12 = kXofR_global_mem[x] * kXofR_global_mem[(i + Start)] + \
                      kYofR_global_mem[x] * kYofR_global_mem[(i + Start)] + \
                      kZofR_global_mem[x] * kZofR_global_mem[(i + Start)]
 
-            # Prod22 = kX2*kX2 + kY2*kY2 + kZ2*kZ2
-            # Prod22 = kXNow[(i+Start)]*kXNow[(i+Start)] + kYNow[(i+Start)]*kYNow[(i+Start)] + kZNow[(i+Start)]*kZNow[(i+Start)]
             Prod22 = kXofR_global_mem[(i + Start)] * kXofR_global_mem[(i + Start)] + \
                      kYofR_global_mem[(i + Start)] * kYofR_global_mem[(i + Start)] + \
                      kZofR_global_mem[(i + Start)] * kZofR_global_mem[(i + Start)]

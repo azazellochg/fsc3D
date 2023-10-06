@@ -13,8 +13,6 @@ def print_progress(iteration, total, prefix='', suffix='', decimals=1):
         decimals    - Optional    : positive number of decimals in percent complete (Int)
         bar_length    - Optional    : character length of bar (Int)
     """
-
-    # rows, columns = os.popen('stty size', 'r').read().split()
     columns = 40
     bar_length = int(float(columns) / 2)
     str_format = "{0:." + str(decimals) + "f}"
@@ -36,6 +34,4 @@ def blockPrint():
 
 
 def enablePrint():
-    #       sys.stdout = open('threedfscstdout.log', 'a')
     sys.stdout = sys.__stdout__
-    #pass

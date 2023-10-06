@@ -28,7 +28,6 @@
 ### ============================
 version = "6.0"
 
-# pythonlib
 import matplotlib
 
 matplotlib.use('Agg')
@@ -160,8 +159,7 @@ def threshold_binarize_mrc(inmrc, thresholded, thresholdedbinarized, FSCCutoff, 
         outarraythresholded, outarraythresholdedbinarized = cuda_functions.threshold_binarize_array_cuda(inputmrc,
                                                                                                          FSCCutoff,
                                                                                                          ThresholdForSphericity,
-                                                                                                         highpassfilter,
-                                                                                                         apix)
+                                                                                                         highpassfilter)
 
     else:
         outarraythresholded, outarraythresholdedbinarized = threshold_binarize_array(inputmrc, FSCCutoff,
@@ -320,7 +318,7 @@ def calculate_sphericity_array(dataarray):
 
     dataarray_copy = copy.deepcopy(dataarray)
     extended_inputmrc = np.zeros((dataarray.shape[0] + 10, dataarray.shape[1] + 10, dataarray.shape[2] + 10),
-                                 dtype=np.float)  # Had to extend it before Gaussian filter, else you might get edge effects
+                                 dtype=np.float64)  # Had to extend it before Gaussian filter, else you might get edge effects
     extended_inputmrc[6:6 + dataarray.shape[0], 6:6 + dataarray.shape[1], 6:6 + dataarray.shape[2]] = dataarray_copy
 
     # Gaussian filtering
@@ -359,7 +357,6 @@ def histogram_sample(inmrc, highpassfilter, ThreeDFSC):
     counter = 0
 
     for theta in np.arange(1, 360, 36):
-        # print("theta: %d" % (theta))
         for phi in np.arange(1, 360, 36):
             for r in range(radius):
 
@@ -390,14 +387,11 @@ def HistogramCreation(histogram_sampling, histogram, ThreeDFSC, apix, cutoff, sp
     for i in histogram_sampling:
         stddev.append(StandardDeviation(i))
         mean.append(Mean(i))
-    # print (stddev)
-    # print (mean)
 
     stdplusone = [mean[a] + stddev[a] for a in range(len(mean))]
     stdminusone = [mean[a] - stddev[a] for a in range(len(mean))]
 
     ## Open Global FSC
-
     a = open("Results_" + ThreeDFSC + "/ResEM" + ThreeDFSC + "OutglobalFSC.csv", "r")
     b = a.readlines()
     b.pop(0)
@@ -409,24 +403,11 @@ def HistogramCreation(histogram_sampling, histogram, ThreeDFSC, apix, cutoff, sp
         k = (i.strip()).split(",")
         globalspatialfrequency.append(float(k[0]) / apix)
         globalfsc.append(float(k[2]))
-    # print (len(globalspatialfrequency))
+
     maxrange = max(globalspatialfrequency)
     minrange = min(globalspatialfrequency)
 
-    ## Calculate Sum of Standard Deviation
-    ## http://stats.stackexchange.com/questions/25848/how-to-sum-a-standard-deviation
-
-    # sumofvar = 0
-    # for a in stddev:
-    # sumofvar += a ** 2
-    # sumofstd = sqrt(sumofvar)
-
-    # print ("\n\n")
-    # print ("Sum of Standard Deviation is %s" % sumofstd)
-    # print ("\n\n")
-
     ## Histogram
-
     histogramlist = []
 
     for i in range(len(histogram_sampling[0])):
@@ -443,7 +424,6 @@ def HistogramCreation(histogram_sampling, histogram, ThreeDFSC, apix, cutoff, sp
     HistogramRawOutput.close()
 
     ## Plotting
-
     plt.title(
         "Histogram and Directional FSC Plot for %s \n Sphericity = %0.3f out of 1. Global resolution = %0.2f $\AA$.\n \n \n \n" % (
             str(ThreeDFSC), sphericity, global_resolution))
@@ -469,9 +449,6 @@ def HistogramCreation(histogram_sampling, histogram, ThreeDFSC, apix, cutoff, sp
     red_solid_line = mlines.Line2D([], [], color="#e50000", linewidth=3, label="Global FSC")
     green_dotted_line = mlines.Line2D([], [], color="#15b01a", linestyle="--",
                                       label="$\pm$1 S.D. from Mean of Directional FSC")
-    # box = ax1.get_position()
-    # ax1.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
-    # ax2.set_position([box.x0, box.y0 + box.height * 0.1, box.width, box.height * 0.9])
     ax1.legend(handles=[blue_patch, green_dotted_line, red_solid_line], loc='center', bbox_to_anchor=(0.5, 1.1), ncol=2)
     xlabel = ax1.set_xlabel("Spatial Frequency ($\AA^{-1}$)")
 
@@ -638,7 +615,7 @@ def main(halfmap1, halfmap2, fullmap, apix, ThreeDFSC, dthetaInDegrees, histogra
             if gpu:
                 threedfsc_array_thresholded, threedfsc_array_thresholded_binarized = \
                     cuda_functions.threshold_binarize_array_cuda(threedfsc_array, FSCCutoff, thresh,
-                                                                 FourierShellHighPassFilter, apix)
+                                                                 FourierShellHighPassFilter)
             else:
                 threedfsc_array_thresholded, threedfsc_array_thresholded_binarized = \
                     threshold_binarize_array(threedfsc_array, FSCCutoff, thresh, FourierShellHighPassFilter, apix)
