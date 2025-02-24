@@ -12,7 +12,7 @@ GPU code and Conda environment by Carl Negro.
 
 1) ``conda create -y -n fsc3D-3.0 "python<3.12" cudatoolkit=11.8``
 2) ``conda activate fsc3D-3.0``
-3) ``pip install numpy numba scipy click h5py scikit-image matplotlib mrcfile``
+3) ``pip install numpy numba==0.58.0 scipy click h5py scikit-image matplotlib mrcfile``
 4) ``git clone https://github.com/azazellochg/fsc3D fsc3D-3.0``
 
 ## Execution ##
