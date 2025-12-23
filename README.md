@@ -4,7 +4,7 @@ This is the most recent version of 3DFSC, by Philip Baldwin, Yong Zi Tan, and Dm
 
 GPU code and Conda environment by Carl Negro.
 
-3DFSC Program Suite requires Miniconda 3 to run, and UCSF Chimera to visualize the outputs.
+3DFSC Program Suite requires Miniconda 3 to run, and UCSF Chimera or ChimeraX to visualize the outputs.
 
 **Important: this version of the software has been modified to work with updated dependencies (October 2023). I have tested it with cudatoolkit 11.8**
 
@@ -18,6 +18,35 @@ GPU code and Conda environment by Carl Negro.
 ## Execution ##
 
 To view the 3DFSC parameters, access the help info like `ThreeDFSC/ThreeDFSC_Start.py -h`.
+
+**Important notes:**
+- The `--apix` parameter is **required** and must be set to the correct pixel size of your map. The default value of 1.0 is incorrect and should not be used.
+- Use `--viewer` to specify the visualization tool: `chimera` (default) or `chimerax`.
+
+**Example 1: Using Chimera (default viewer)**
+```bash
+python ThreeDFSC/ThreeDFSC_Start.py \
+--halfmap1 <path_to_halfmap1.mrc> \
+--halfmap2 <path_to_halfmap2.mrc> \
+--fullmap <path_to_fullmap.mrc> \
+--mask <path_to_mask.mrc> \
+--ThreeDFSC <output_directory> \
+--gpu \
+--apix <pixel_size>
+```
+
+**Example 2: Using ChimeraX**
+```bash
+python ThreeDFSC/ThreeDFSC_Start.py \
+--halfmap1 <path_to_halfmap1.mrc> \
+--halfmap2 <path_to_halfmap2.mrc> \
+--fullmap <path_to_fullmap.mrc> \
+--mask <path_to_mask.mrc> \
+--ThreeDFSC <output_directory> \
+--gpu \
+--apix <pixel_size> \
+--viewer chimerax
+```
 
 ## GPU Execution ##
 

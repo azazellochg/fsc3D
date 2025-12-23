@@ -46,6 +46,26 @@ from scipy.ndimage.filters import gaussian_filter
 import cuda_functions
 
 
+VIEWER_CONFIG = {
+    'chimera': {
+        'output_dir': 'Chimera',
+        'cmd_file': '3DFSCPlot_Chimera.cmd',
+        'template_cmd': '3DFSCPlot_Chimera_Template.cmd'
+    },
+    'chimerax': {
+        'output_dir': 'ChimeraX',
+        'cmd_file': '3DFSCPlot_ChimeraX.cxc',
+        'template_cmd': '3DFSCPlot_ChimeraX_Template.cxc'
+    }
+}
+
+
+def get_viewer_config(viewer):
+    if viewer not in VIEWER_CONFIG:
+        raise ValueError("Invalid viewer: %s. Supported viewers: %s" % (viewer, ', '.join(VIEWER_CONFIG.keys())))
+    return VIEWER_CONFIG[viewer]
+
+
 def cartesian_to_spherical(vector):
     """Convert the Cartesian vector [x, y, z] to spherical coordinates [r, theta, phi].
 
@@ -466,9 +486,14 @@ def HistogramCreation(histogram_sampling, histogram, ThreeDFSC, apix, cutoff, sp
     return 1 / float(max(histogramlist)), 1 / float(min(histogramlist)), globalspatialfrequency, globalfsc
 
 
-def ChimeraOutputCreate(ThreeDFSC, apix, maxRes, minRes, fullmap, globalspatialfrequency, globalfsc, global_resolution):
+def ChimeraOutputCreate(ThreeDFSC, apix, maxRes, minRes, fullmap, globalspatialfrequency, globalfsc, global_resolution, viewer='chimera'):
+    config = get_viewer_config(viewer)
+    template_dir = config['output_dir']
+    cmd_file = config['cmd_file']
+    template_cmd = config['template_cmd']
+    
     ## Generate Lineplot.py File
-    with open(os.path.realpath(__file__)[:-21] + "Chimera/lineplot_template.py") as f:
+    with open(os.path.realpath(__file__)[:-21] + template_dir + "/lineplot_template.py") as f:
         replaced1 = f.read().replace("#==apix==#", str(apix))
         replaced2 = replaced1.replace("#==maxres==#", str(maxRes))
         replaced3 = replaced2.replace("#==minres==#", str(minRes))
@@ -476,13 +501,13 @@ def ChimeraOutputCreate(ThreeDFSC, apix, maxRes, minRes, fullmap, globalspatialf
         replaced5 = replaced4.replace("#==global_y==#", str(globalfsc))
         replaced6 = replaced5.replace("#==global_res==#", str(global_resolution))
 
-    with open("Results_" + str(ThreeDFSC) + "/Chimera/lineplot.py", "w") as f:
+    with open("Results_" + str(ThreeDFSC) + "/" + template_dir + "/lineplot.py", "w") as f:
         f.write(replaced6)
 
     ## Obtain origins for maps
 
     # read MRCS
-    input3DFSC = (mrcfile.open("Results_" + str(ThreeDFSC) + "/Chimera/" + ThreeDFSC + ".mrc")).data
+    input3DFSC = (mrcfile.open("Results_" + str(ThreeDFSC) + "/" + template_dir + "/" + ThreeDFSC + ".mrc")).data
     inputFullMap = (mrcfile.open(fullmap)).data  # Full maps can be anywhere
 
     # coordinates
@@ -492,15 +517,14 @@ def ChimeraOutputCreate(ThreeDFSC, apix, maxRes, minRes, fullmap, globalspatialf
         int(inputFullMap.shape[2] / 2))
 
     ## 3DFSCPlot_Chimera.cmd File
-
-    with open(os.path.realpath(__file__)[:-21] + "Chimera/3DFSCPlot_Chimera_Template.cmd") as f:
+    with open(os.path.realpath(__file__)[:-21] + template_dir + "/" + template_cmd) as f:
         replaced1 = f.read().replace("#===3DFSC====#", str(os.path.basename(ThreeDFSC)) + ".mrc")
         replaced2 = replaced1.replace("#==apix==#", str(apix))
         replaced3 = replaced2.replace("#==Origin3DFSC==#", str(center3DFSC))
         replaced4 = replaced3.replace("#==OriginFullMap==#", str(centerFullMap))
         replaced5 = replaced4.replace("#===FullMap====#", str(os.path.basename(fullmap)))
 
-    with open("Results_" + str(ThreeDFSC) + "/Chimera/3DFSCPlot_Chimera.cmd", "w") as f:
+    with open("Results_" + str(ThreeDFSC) + "/" + template_dir + "/" + cmd_file, "w") as f:
         f.write(replaced5)
 
 
@@ -550,7 +574,7 @@ def calc_threshold_ranges(numThresholdsForSphericityCalcs, FSCCutoff):
 
 
 def main(halfmap1, halfmap2, fullmap, apix, ThreeDFSC, dthetaInDegrees, histogram, FSCCutoff, ThresholdForSphericity,
-         HighPassFilter, numThresholdsForSphericityCalcs, gpu=False):
+         HighPassFilter, numThresholdsForSphericityCalcs, gpu=False, viewer='chimera'):
     # Part 00
     # Warnings and checks. Invisible to user unless something is wrong
     global_resolution = check_globalFSC(ThreeDFSC, apix)
@@ -589,16 +613,20 @@ def main(halfmap1, halfmap2, fullmap, apix, ThreeDFSC, dthetaInDegrees, histogra
     print("Results_" + ThreeDFSC + "/" + histogram + ".pdf generated.")
 
     # Part 05
-    click.echo(click.style("\nAnalysis Step 04: Generating Output Files for Chimera Viewing of 3DFSC", fg="blue"))
-    os.system("mkdir Results_" + str(ThreeDFSC) + "/Chimera")
+    config = get_viewer_config(viewer)
+    output_dir = config['output_dir']
+    cmd_file_name = config['cmd_file']
+    
+    click.echo(click.style("\nAnalysis Step 04: Generating Output Files for %s Viewing of 3DFSC" % output_dir, fg="blue"))
+    os.system("mkdir Results_" + str(ThreeDFSC) + "/" + output_dir)
     os.system(
-        "cp Results_" + str(ThreeDFSC) + "/" + str(ThreeDFSC) + ".mrc " + " Results_" + str(ThreeDFSC) + "/Chimera/")
-    os.system("cp " + fullmap + " Results_" + str(ThreeDFSC) + "/Chimera/")
-    ChimeraOutputCreate(ThreeDFSC, apix, maxRes, minRes, fullmap, globalspatialfrequency, globalfsc, global_resolution)
-    print("Results_" + str(ThreeDFSC) + "/Chimera/3DFSCPlot_Chimera.cmd and Results_" + str(
-        ThreeDFSC) + "/Chimera/lineplot.py generated.")
+        "cp Results_" + str(ThreeDFSC) + "/" + str(ThreeDFSC) + ".mrc " + " Results_" + str(ThreeDFSC) + "/" + output_dir + "/")
+    os.system("cp " + fullmap + " Results_" + str(ThreeDFSC) + "/" + output_dir + "/")
+    ChimeraOutputCreate(ThreeDFSC, apix, maxRes, minRes, fullmap, globalspatialfrequency, globalfsc, global_resolution, viewer=viewer)
+    print("Results_" + str(ThreeDFSC) + "/" + output_dir + "/" + cmd_file_name + " and Results_" + str(
+        ThreeDFSC) + "/" + output_dir + "/lineplot.py generated.")
     print(
-        "To view in Chimera, open 3DFSCPlot_Chimera.cmd in Chimera, with lineplot.py and the mrc files in the Chimera folder in the same directory.")
+        "To view in %s, open %s in %s, with lineplot.py and the mrc files in the %s folder in the same directory." % (output_dir, cmd_file_name, output_dir, output_dir))
 
     # Part 06
     # Optionally, calculate sphericities across multiple thresholds to determine the deviation from the mean
