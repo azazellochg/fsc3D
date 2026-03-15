@@ -1,0 +1,30 @@
+# Display 3DFSC and color original map by angular resolution (ChimeraX version)
+
+# Load the ChimeraX python script that registers the "fscplot" command
+open lineplot.py
+
+# Background
+set bgColor white
+
+# Open both volumes (update paths as needed)
+open #===3DFSC====#
+volume #1 originIndex #==Origin3DFSC==#
+volume #1 voxelSize #==apix==#
+
+open #===FullMap====#
+volume #2 originIndex #==OriginFullMap==#
+volume #2 voxelSize #==apix==#
+
+# Hide the 3DFSC volume; keep original density visible
+hide #1
+
+# Fit view
+view
+
+# Draw the color key
+# Use "Times New Roman" font if available
+key red:Poorer blue:Better pos 0.20,0.10 size 0.6,0.04 ticks true tickThickness 3 labelColor black
+2dlabels create Label text "Relative XY-plane resolution (AU)" color black xpos 0.20 ypos 0.16
+
+# Execute fsc plot; use #1 to calculate ray values, then color #2
+fscplot #1

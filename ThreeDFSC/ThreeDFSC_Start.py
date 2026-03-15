@@ -163,7 +163,7 @@ def execute(options):
     ThreeDFSC_Analysis.main(halfmap1, halfmap2, fullmap, options.apix, options.ThreeDFSC, options.dthetaInDegrees,
                             options.histogram, options.FSCCutoff,
                             options.ThresholdForSphericity, options.HighPassFilter,
-                            options.numThresholdsForSphericityCalcs, options.gpu)
+                            options.numThresholdsForSphericityCalcs, options.gpu, viewer=options.viewer)
     print("\nDone")
     print("Results are in the folder Results_" + str(options.ThreeDFSC))
     print("--- %s seconds ---" % (time.time() - start_program_time))
@@ -226,6 +226,10 @@ if __name__ == '__main__':
     parser.add_option("--gpu_id", dest="gpu_id", action="store", type="int", default=False,
                       help="If using GPU, specify the device id to use like '--gpu_id=1'. Select only one device (no multi-GPU support).",
                       metavar="INT")
+
+    parser.add_option("--viewer", dest="viewer", action="store", type="string", default="chimera",
+                  help="Viewer to use for visualization: 'chimera' or 'chimerax'. Default is 'chimera'.",
+                  metavar="STRING")
     (options, args) = parser.parse_args()
     print("\n*******************************************\n")
     print("Running 3DFSC with the following parameters:\n")
